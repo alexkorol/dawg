@@ -12,7 +12,7 @@ DAWG is a Flask web application that interfaces with OpenAI's DALL-E 3 API to ge
 
 Clone the repository and navigate into the directory:
 ```bash
-git clone https://your-repository-url
+git clone https://github.com/alexkorol/dawg
 cd your-repository-directory
 ```
 
