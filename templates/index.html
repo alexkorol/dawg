@@ -15,6 +15,24 @@
             height: auto;
             border-radius: 0.5rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        .image-container {
+            position: relative;
+        }
+        .image-container:hover .prompt-overlay {
+            display: block;
+        }
+        .prompt-overlay {
+            position: absolute;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            width: 100%;
+            padding: 10px;
+            display: none;
+            text-align: center;
+            border-radius: 0 0 0.5rem 0.5rem;
         }
         .api-key-input {
             font-family: monospace;
@@ -28,46 +46,51 @@
             font-size: 1.25rem;
             height: 100%;
         }
+        .download-link {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: none;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            padding: 5px;
+            color: black;
+            text-decoration: none;
+        }
+        .image-container:hover .download-link {
+            display: block;
+        }
+        .title, .tagline {
+            text-align: center;
+        }
+        .loading-spinner {
+            margin-left: 10px;
+        }
     </style>
 </head>
 <body class="bg-gray-100">
     <div class="container mx-auto p-8">
-        <h1 class="text-4xl font-bold mb-4">Dall-e3 Artwork Generator (DAWG)</h1>
-        <p class="mb-6 text-lg">Unleash your creativity</p>
+        <h1 class="text-4xl font-bold mb-4 title">Dall-e3 Artwork Generator (DAWG)</h1>
+        <p class="mb-6 text-lg tagline">Unleash your creativity</p>
         <div class="bg-white shadow-md rounded-lg p-6 mb-6">
             <!-- Form for generating images -->
             <form method="POST">
-                <div class="mb-4">
-                    <label for="api-key" class="block text-sm font-medium text-gray-700 mb-1">OpenAI API key:</label>
-                    <input type="text" id="api-key" name="api_key" class="api-key-input shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md" placeholder="sk-**************************">
-                </div>
-                <div class="mb-4">
-                    <label for="image-size" class="block text-sm font-medium text-gray-700 mb-1">Size:</label>
-                    <select id="image-size" name="size" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-                        <option value="1024x1024">1024x1024</option>
-                        <option value="1024x1792">1024x1792</option>
-                        <option value="1792x1024">1792x1024</option>
-                    </select>
-                </div>
-                <div class="flex items-center mb-4">
-                    <input id="hd-checkbox" name="quality" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
-                    <label for="hd-checkbox" class="ml-2 block text-sm text-gray-900">HD</label>
-                </div>
-                <div class="mb-4">
-                    <label for="prompt" class="block text-sm font-medium text-gray-700 mb-1">Prompt:</label>
-                    <textarea id="prompt" name="prompt" rows="2" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md" placeholder="avloptimization chess dinger strategy cristiano blackfish hellboy kar juruby schalke messi temgrandprix medieval chess feather"></textarea>
-                </div>
-                <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Generate Image
+                <!-- ... other form elements ... -->
+                <button type="submit" id="generate-button" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    <span class="button-text">Generate Image</span>
+                    <span class="loading-spinner hidden">🔄</span>
                 </button>
             </form>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 image-grid">
             <!-- Placeholder for images -->
             {% for image in generated_images %}
-                <div>
-                    <img src="{{ image.url }}" alt="Generated Image">
-                    <p>Cost: ${{ image.cost }}</p>
+                <div class="image-container">
+                    <a href="{{ image.url }}" target="_blank">
+                        <img src="{{ image.url }}" alt="Generated Image">
+                    </a>
+                    <div class="prompt-overlay">{{ image.prompt }}</div>
+                    <a href="{{ image.url }}" download class="download-link">Download</a>
                 </div>
             {% else %}
                 <div class="image-placeholder">No images yet</div>
@@ -75,7 +98,10 @@
         </div>
     </div>
     <script>
-        // Placeholder for any potential JavaScript interactions
+        document.getElementById('generate-button').addEventListener('click', function() {
+            document.querySelector('.button-text').classList.add('hidden');
+            document.querySelector('.loading-spinner').classList.remove('hidden');
+        });
     </script>
 </body>
 </html>

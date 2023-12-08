@@ -1,18 +1,14 @@
 from flask import Flask, render_template, request
 import requests
-import os
 import json
-from datetime import datetime
 
 app = Flask(__name__)
-
-# Assuming your OpenAI API key is set as an environment variable
-OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     error_message = None
     generated_images = []
+    form_data = {}
     cost_per_image = {
         'Standard_1024x1024': 0.040,
         'Standard_1024x1792': 0.080,
@@ -23,13 +19,15 @@ def index():
     }
 
     if request.method == 'POST':
-        prompt = request.form.get('prompt')
-        quality = request.form.get('quality')
-        size = request.form.get('size')
-        n = int(request.form.get('number_of_images'))
+        form_data = request.form
+        api_key = form_data.get('api_key')
+        prompt = form_data.get('prompt')
+        size = form_data.get('size')
+        n = int(form_data.get('number_of_images', '1'))
+        quality = 'HD' if form_data.get('quality') == 'on' else 'Standard'
 
         headers = {
-            'Authorization': f'Bearer {OPENAI_API_KEY}',
+            'Authorization': f'Bearer {api_key}',
             'Content-Type': 'application/json'
         }
 
@@ -48,13 +46,14 @@ def index():
             for item in result['data']:
                 generated_images.append({
                     'url': item['url'],
-                    'cost': cost_per_image[f'{quality}_{size}']
+                    'cost': cost_per_image[f'{quality}_{size}'],
+                    'prompt': prompt
                 })
 
         except requests.exceptions.HTTPError as err:
             error_message = str(err)
 
-    return render_template('index.html', error_message=error_message, generated_images=generated_images)
+    return render_template('index.html', error_message=error_message, generated_images=generated_images, form_data=form_data)
 
 
 if __name__ == '__main__':
