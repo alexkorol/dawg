@@ -48,7 +48,7 @@ def index():
             # Save generated images to session to persist history
             if 'generated_images' not in session:
                 session['generated_images'] = []
-            session['generated_images'].extend(generated_images)
+            session['generated_images'] = generated_images + session.get('generated_images', [])
             session.modified = True
 
         except requests.exceptions.HTTPError as err:

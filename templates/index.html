@@ -114,8 +114,18 @@
             </form>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 image-grid">
-            <!-- Placeholder for images -->
-            {% for image in generated_images %}
+            <!-- Display the latest image larger and first -->
+            {% if generated_images %}
+                <div class="image-container mb-4">
+                    <a href="{{ generated_images[0].url }}" target="_blank">
+                        <img src="{{ generated_images[0].url }}" alt="Generated Image" style="width: 100%; max-width: 1024px;">
+                    </a>
+                    <div class="prompt-overlay">{{ generated_images[0].prompt }}</div>
+                    <a href="{{ generated_images[0].url }}" download class="download-link">Download</a>
+                </div>
+            {% endif %}
+            <!-- Placeholder for the rest of the images -->
+            {% for image in generated_images[1:] %}
                 <div class="image-container">
                     <a href="{{ image.url }}" target="_blank">
                         <img src="{{ image.url }}" alt="Generated Image">
